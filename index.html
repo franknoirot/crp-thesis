@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 12px sans-serif;
+}
+
+path {
+  stroke-width: 1px;
+  stroke: black;
+  fill: none;
+  cursor: pointer;
+}
+
+path:hover, path.highlighted {
+  fill: tomato;
+}
+
+svg {
+  border: solid #a8b 10px;
+}
+
+</style>
+
+<body>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
+  <script>
+    //map dimensions
+    var width = 600,
+        height = 350;
+
+    //map projection
+    var projection = d3.geo.albersUsa()
+        .scale(500)
+        .translate([width/2,height/2]); //the example code doesn't have this semicolon
+
+    //generate paths
+    var path = d3.geo.path()
+        .projection(projection);
+
+    //create an SVG
+    var svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    //group map features
+    var features = svg.append("g")
+        .attr("class", "features");
+
+    //add zoom listener here
+
+    //open json
+    d3.json("cbus_tracts.json", function(error, geodata) {
+      if (error) return console.log(error);
+
+      //create paths
+      features.selectAll("path")
+          .data(topojson.feature(geodata, geodata.objects.collection).features) //generates features
+          .enter()
+          .append("path")
+          .attr("d", path);
+    });
+
+  </script>
+</body>
